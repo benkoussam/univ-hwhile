@@ -1,0 +1,140 @@
+univ
+read PD{
+	P := hd PD;
+	D := tl PD;
+	X := hd P;
+	Y := hd tl tl P; (* final var *)
+	B := hd tl P;
+	cd := B;
+	st := nil;
+	store := cons D nil; (* or store := [D] or store := D or store := [X D] *)
+	while cd{
+		first := hd cd;
+		top := hd hd cd;
+		if top = @quote{
+			D := hd tl first;
+			st := cons D st;
+			cd := tl cd } else {
+		if top = @var{
+			k := hd tl first;
+			arg := [k,store];
+			kval := <lookup> arg;
+			st := cons kval st;
+			cd := tl cd } else {
+		if top = @hd{
+			E := hd tl first;
+			cd := tl cd;
+			cd := cons @doHd cd;
+			cd := cons E cd } else {
+		if top = @tl{
+			E := hd tl first;
+			cd := tl cd;
+			cd := cons @doTl cd;
+			cd := cons E cd } else {
+		if top = @cons{
+			E := hd tl first;
+			F := hd tl tl first;
+			cd := tl cd;
+			cd := cons @doCons cd;
+			cd := cons E cd;
+			cd := cons F cd } else {
+		if top = @:={
+			k := hd tl hd cd;
+			E := hd tl tl hd cd;
+			cd := tl cd;
+			cd := cons k cd;
+			cd := cons @doAsgn cd;
+			cd := cons E cd	} else {
+		if top = @while{
+			E := hd tl first;
+			C := hd tl tl first;
+			cd := cons @doWhile cd;
+			cd := cons E cd } else {
+		if top = @if {
+			E := hd tl first;
+			C := hd tl tl first;
+			D := hd tl tl tl first;
+			cd := tl cd;
+			cd := cons D cd;
+			cd := cons C cd;
+			cd := cons @doIf cd;
+			cd := cons E cd
+		} else {
+		if first = @doHd{
+			cd := tl cd;
+			T:= hd hd st;
+			st := tl st;
+			st := cons T st } else {
+		if first = @doTl{
+			cd := tl cd;
+			T := tl hd st;
+			st := tl st;
+			st := cons T st } else {
+		if first = @doCons{
+			cd := tl cd;
+			arg1 := hd st;
+			arg2 := hd tl st;
+			st := tl tl st;
+			consed := cons arg1 arg2;
+			st := cons consed st } else {
+		if first = @doAsgn{
+			cd := tl cd;
+			k := hd cd;
+			cd := tl cd;
+			v := hd st;
+			st := tl st;
+			r := [k,v,store];
+			store := <rewrite> r } else {
+		if first = @doWhile{
+			next := hd tl cd;
+			C := hd tl tl next;
+			if hd st = nil{
+				cd := tl tl cd;
+				st := tl st
+			}
+			else{
+				st := tl st;
+				cd := tl cd;
+				revc := <reverse> C;
+				while revc{
+					first := hd revc;
+					cd := cons first cd;
+					revc := tl revc
+				}
+			}
+		} else {
+		if first = @doIf{
+			val := hd st;
+			st := tl st;
+			if val = nil{
+				cd := tl tl cd;
+				D := hd cd;
+				cd := tl cd;
+				D := <reverse> D;
+				while D{
+					dtop := hd D;
+					cd := cons dtop cd;
+					D := tl D
+				}
+			}
+			else{
+				cd := tl cd;
+				C := hd cd;
+				cd := tl cd;
+				cd := tl cd;
+				C := <reverse> C;
+				while C{
+					ctop := hd C;
+					cd := cons ctop cd;
+					C := tl C
+				}
+			}
+		}
+		else{
+			res := <lookup> cons top store;
+			cd := nil
+		}}}}}}}}}}}}}}
+	};
+	arg := [Y,store];
+	output := <lookup> arg
+} write output

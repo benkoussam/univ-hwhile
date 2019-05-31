@@ -1,0 +1,20 @@
+rewrite
+read X{
+	k := hd X;
+	v := hd tl X;
+	store := hd tl tl X;
+	temp := [];
+	while k{
+		top := hd store;
+		temp := cons top temp;
+		store := tl store;
+		k := tl k
+	};
+	store := tl store;
+	store := cons v store;
+	while temp{
+		first := hd temp;
+		store := cons first store;
+		temp := tl temp
+	}
+}write store

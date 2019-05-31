@@ -1,0 +1,14 @@
+lookup
+read XS{
+	X := hd XS;
+	S := hd tl XS;
+	count := 0;
+	Res := nil;
+	while S{
+		if (X=count){
+			Res := hd S
+		};
+		S := tl S;
+		count := cons nil count
+	}
+} write Res
